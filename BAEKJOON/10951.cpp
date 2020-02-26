@@ -9,9 +9,8 @@ int main()
 
     int num1;
     int num2;
-    while(num1 == 0 && num2 == 0)
+    while( cin >> num1 >> num2 ) //EOF일 때까지 반복
     {
-        cin >> num1 >> num2;  //EOF일 때까지 반복
         cout << num1+num2 << '\n';
     }
 }
