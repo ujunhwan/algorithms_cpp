@@ -28,7 +28,7 @@ int main() {
         if(tmp < 0) continue;
         ans = min(ans, tmp);
     }
-    while(next_permutation(a, a+n));
+    while(next_permutation(a+1, a+n));
     cout << ans << '\n';
     return 0;
 }
