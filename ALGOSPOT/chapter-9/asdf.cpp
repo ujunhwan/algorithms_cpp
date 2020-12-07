@@ -28,7 +28,8 @@ int main() {
 	int data;
 	data = 11;
 	pdata = &data;
-
+	int asdf = (17 >> 3);
+	printf("%d\n", asdf);
 
 	pdequeue(22, pdata);
 	printf("%d %d\n", data, *pdata);
