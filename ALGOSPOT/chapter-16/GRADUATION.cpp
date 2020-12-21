@@ -5,38 +5,42 @@
 #define fio ios_base::sync_with_stdio(false); cin.tie(nullptr);
 using namespace std;
 
+const int INF = 987654321;
 int C, N, K, M, L;
 int pre[13], subject[11];
 int Ri[13], Ci[11];
+int cache[10 + 1][1 << 12 + 1];
 
-int calc() {
-    int ret = 0;
-    int taken = 0;
-    for(int semester = 0; semester < M; semester++) {
-        int limit = L;
-        int currentTaken = taken;
-        bool take = false;
-        for(int i = 0; i < Ci[semester]; i++) {
-            if(limit == 0) continue;
-            if(currentTaken & (1 << i)) continue;
-            // 이번학기 열리고, 안들었고, 선수과목이 없거나 들었으면 수강
-            if((subject[semester] & (1 << i)) && (pre[i] == 0 || (currentTaken & pre[i]) == pre[i])) {
-                take = true;
-                taken |= (1 << i);
-                limit--;
-            }
-        }
-        if(take) ret++;
-        if(__builtin_popcount(taken) == K) return ret;
+int calc(int semester, int taken) {
+    if(__builtin_popcount(taken) >= K) return 0;
+    if(semester  == M) return INF;
+
+    int&ret = cache[semester][taken];
+    if(ret != -1) return ret;
+    ret = INF;
+
+    int canTake = (subject[semester] & ~taken);
+
+    for(int i = 0; i < N; i++)
+        if(canTake & (1 << i) && (taken & pre[i]) != pre[i])
+            canTake &= ~(1 << i);
+
+    for(int take = canTake; take > 0; take = (take - 1) & canTake) {
+        if(__builtin_popcount(take) > L) continue;
+        ret = min(ret, calc(semester + 1, taken | take) + 1);
     }
-    return 1000;
+
+    ret = min(ret, calc(semester + 1, taken));
+    return ret;
 }
 
 int main() {
     fio; cin >> C;
+    vector<int> ans;
     while(C--) {
         memset(pre, 0, sizeof(pre));
         memset(subject, 0, sizeof(subject));
+        memset(cache, -1, sizeof(cache));
         cin >> N >> K >> M >> L;
         int num;
         for(int i = 0; i < N; i++) {
@@ -53,9 +57,13 @@ int main() {
                 subject[i] |= (1 << num);
             }
         }
-        int ans = calc();
-        if(ans > 10) cout << "IMPOSSIBLE" << '\n';
-        else cout << ans << '\n';
+        ans.push_back(calc(0, 0));
     }
+
+    for(int i = 0; i < ans.size(); i++) {
+        if(ans[i] > 10) cout << "IMPOSSIBLE" << '\n';
+        else cout << ans[i] << '\n';
+    }
+
     return 0;
 }
