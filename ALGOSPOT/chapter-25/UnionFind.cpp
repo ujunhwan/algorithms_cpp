@@ -18,7 +18,7 @@ struct DisjointSet {
         if(u == v) return;
         if(rank[u] > rank[v]) swap(u, v);
         parent[u] = v;
-        if(rank[u] = rank[v]) rank[v]++;
+        if(rank[u] == rank[v]) rank[v]++;
     }
 
 };
